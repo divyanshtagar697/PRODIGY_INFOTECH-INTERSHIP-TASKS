@@ -1,1 +1,1 @@
-# PRODIGY_INFOTECH-INTERSHIP-TASKS
+A collection of tasks for the html,css, java
