@@ -1,0 +1,163 @@
+
+<html >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prodigy Task 02 - Professional Stopwatch</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; }
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            width: 350px;
+        }
+
+        #display {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #00d2ff;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        #startBtn { background-color: #2ecc71; color: white; }
+        #pauseBtn { background-color: #f1c40f; color: black; display: none; }
+        #resetBtn { background-color: #e74c3c; color: white; }
+        #lapBtn { background-color: #3498db; color: white; }
+
+        button:hover { opacity: 0.8; transform: scale(1.05); }
+
+        /* Lap List Styling */
+        #laps {
+            list-style: none;
+            max-height: 150px;
+            overflow-y: auto;
+            text-align: left;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 10px;
+        }
+
+        #laps li {
+            padding: 5px 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>STOPWATCH</h2>
+        <div id="display">00:00:00.00</div>
+        
+        <div class="buttons">
+            <button id="startBtn" onclick="start()">Start</button>
+            <button id="pauseBtn" onclick="pause()">Pause</button>
+            <button id="lapBtn" onclick="recordLap()">Lap</button>
+            <button id="resetBtn" onclick="reset()">Reset</button>
+        </div>
+
+        <ul id="laps"></ul>
+    </div>
+
+    <script>
+        let startTime, elapsedTime = 0, timerInterval;
+
+        function timeToString(time) {
+            let diffInHrs = time / 3600000;
+            let hh = Math.floor(diffInHrs);
+
+            let diffInMin = (diffInHrs - hh) * 60;
+            let mm = Math.floor(diffInMin);
+
+            let diffInSec = (diffInMin - mm) * 60;
+            let ss = Math.floor(diffInSec);
+
+            let diffInMs = (diffInSec - ss) * 100;
+            let ms = Math.floor(diffInMs);
+
+            let formattedMM = mm.toString().padStart(2, "0");
+            let formattedSS = ss.toString().padStart(2, "0");
+            let formattedMS = ms.toString().padStart(2, "0");
+
+            return `${formattedMM}:${formattedSS}.${formattedMS}`;
+        }
+
+        function print(txt) {
+            document.getElementById("display").innerHTML = txt;
+        }
+
+        function start() {
+            startTime = Date.now() - elapsedTime;
+            timerInterval = setInterval(function printTime() {
+                elapsedTime = Date.now() - startTime;
+                print(timeToString(elapsedTime));
+            }, 10);
+            showButton("PAUSE");
+        }
+
+        function pause() {
+            clearInterval(timerInterval);
+            showButton("START");
+        }
+
+        function reset() {
+            clearInterval(timerInterval);
+            print("00:00:00.00");
+            elapsedTime = 0;
+            document.getElementById("laps").innerHTML = "";
+            showButton("START");
+        }
+
+        function recordLap() {
+            let lapTime = timeToString(elapsedTime);
+            let li = document.createElement("li");
+            li.innerText = `Lap ${document.querySelectorAll('#laps li').length + 1}: ${lapTime}`;
+            document.getElementById("laps").prepend(li);
+        }
+
+        function showButton(buttonKey) {
+            const startBtn = document.getElementById("startBtn");
+            const pauseBtn = document.getElementById("pauseBtn");
+
+            if (buttonKey === "PAUSE") {
+                startBtn.style.display = "none";
+                pauseBtn.style.display = "block";
+            } else {
+                startBtn.style.display = "block";
+                pauseBtn.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
